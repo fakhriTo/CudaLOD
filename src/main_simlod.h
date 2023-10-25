@@ -239,10 +239,8 @@ int main(){
 
 	{// WHATEVER
 		Setting setting;
-		// setting.path_las = "F:/temp/wgtest/morro_bay/morro_bay_278M_morton.las"; 
-		setting.path_las = "D:/dev/pointclouds/tuwien_baugeschichte/candi Sari/photoscan19_exterior - POLYDATA - photoscan19_exterior.las"; 
-		setting.path_las = "D:/dev/pointclouds/sitn/mobile_2561500_1204500.las"; 
-		setting.path_las = "D:/dev/pointclouds/Riegl/subset.las"; 
+		setting.path_las = "D:/02_data/LAS/Joinville 363 Million.las";
+		//setting.path_las = "D:/02_data/LAS/Joinville 50 Million.las";
 
 		settings["whatever"] = setting;
 	}

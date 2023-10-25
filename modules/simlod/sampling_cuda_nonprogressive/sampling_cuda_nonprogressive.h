@@ -32,6 +32,7 @@
 
 #include "utils.h"
 #include "OctreeWriter.h"
+#include "OctreeWriterLAZ.h"
 
 #include <thrust/sort.h>
 #include <thrust/functional.h>
@@ -288,46 +289,46 @@ struct VoxelTreeGen{
 		// if(false)
 		{ // write test results
 
-			// struct Point{
-			// 	float x;
-			// 	float y;
-			// 	float z;
-			// 	unsigned int color;
-			// };
-			// struct Node{
-			// 	int pointOffset;
-			// 	int numPoints;
-			// 	Point* points;
-			// 	int numAdded;
-			// 	int level;
-			// 	int voxelIndex;
-			// 	vec3 min;
-			// 	vec3 max;
-			// 	float cubeSize;
-			// 	Node* children[8];
-			// 	int numVoxels = 0;
-			// 	Point* voxels = nullptr;
-			// 	bool visible = true;
-			// };
+			 //struct Point{
+			 //	float x;
+			 //	float y;
+			 //	float z;
+			 //	unsigned int color;
+			 //};
+			 //struct Node{
+			 //	int pointOffset;
+			 //	int numPoints;
+			 //	Point* points;
+			 //	int numAdded;
+			 //	int level;
+			 //	int voxelIndex;
+			 //	vec3 min;
+			 //	vec3 max;
+			 //	float cubeSize;
+			 //	Node* children[8];
+			 //	int numVoxels = 0;
+			 //	Point* voxels = nullptr;
+			 //	bool visible = true;
+			 //};
 
-			// cout << "copy device to host" << endl;
-			// Buffer buffer(10'000'000'000);
-			// cuMemcpyDtoH(buffer.data, ptr_buffer, buffer.size);
+			 cout << "copy device to host" << endl;
+			 Buffer buffer(10'000'000'000);
+			 cuMemcpyDtoH(buffer.data, ptr_buffer, buffer.size);
 
-			// uint64_t ptrNodes = 0;
-			// cuMemcpyDtoH(&ptrNodes, nodes, 8);
+			 uint64_t ptrNodes = 0;
+			 cuMemcpyDtoH(&ptrNodes, nodes, 8);
 
-			// uint32_t numNodes = 0;
-			// cuMemcpyDtoH(&numNodes, num_nodes, 4);
+			 uint32_t numNodes = 0;
+			 cuMemcpyDtoH(&numNodes, num_nodes, 4);
 
-			// cuCtxSynchronize();
+			 cuCtxSynchronize();
 
-			// Box box;
-			// box.min = lasfile->header.boxMin;
-			// box.max = lasfile->header.boxMax;
-			// string path = "E:/temp/test";
-			// OctreeWriter writer(path, box, &buffer, numNodes, ptr_buffer, ptrNodes);
-			// writer.write();
+			 Box box;
+			 box.min = lasfile->header.boxMin;
+			 box.max = lasfile->header.boxMax;
+			 string path = "D:/01_dev/Prototypes/Seurat_Repo/cudaLOD/result";
+			 OctreeWriterLAZ writer(path, box, &buffer, numNodes, ptr_buffer, ptrNodes);
+			 writer.write();
 		}
 
 		{ // RESULTS
@@ -490,15 +491,16 @@ struct VoxelTreeGen{
 			string strMinMax_points = std::format("[{:5}, {:5}, {:5}]", results.minPoints, results.avgPoints, results.maxPoints);
 			string strMinMax_voxels = std::format("[{:5}, {:5}, {:5}]", results.minVoxels, results.avgVoxels, results.maxVoxels);
 
-			string formatted = std::format(formatString, 
-				datestring, devicename, strategy, 
-				split_ms, voxelize_ms, total_ms,
-				results.points, results.voxels, results.nodes, mpointsPerS, 
-				results.allocatedMemory_splitting, results.allocatedMemory_voxelization,
-				strMinMax_points, strMinMax_voxels,
-				results.histogram_maxval, ssHistogram_points.str(), ssHistogram_voxels.str(),
-				strLevels
-			);
+			string formatted = "ToDo";
+			//	std::format(formatString, 
+			//	datestring, devicename, strategy, 
+			//	split_ms, voxelize_ms, total_ms,
+			//	results.points, results.voxels, results.nodes, mpointsPerS, 
+			//	results.allocatedMemory_splitting, results.allocatedMemory_voxelization,
+			//	strMinMax_points, strMinMax_voxels,
+			//	results.histogram_maxval, ssHistogram_points.str(), ssHistogram_voxels.str(),
+			//	strLevels
+			//);
 
 			static bool initialized = false;
 			static stringstream ssResults;
