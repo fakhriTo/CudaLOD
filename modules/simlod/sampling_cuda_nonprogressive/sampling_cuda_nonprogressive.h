@@ -283,10 +283,8 @@ struct VoxelTreeGen{
 
 		cuCtxSynchronize();
 
-		auto tEnd = now();
-		// cout << "cuda duration: " << formatNumber(1000.0 * (tEnd - tStart), 1) << "ms" << endl;
 
-		// if(false)
+		//if(false)
 		{ // write test results
 
 			 //struct Point{
@@ -312,7 +310,7 @@ struct VoxelTreeGen{
 			 //};
 
 			 cout << "copy device to host" << endl;
-			 Buffer buffer(10'000'000'000);
+			 Buffer buffer(MAX_BUFFER_SIZE);
 			 cuMemcpyDtoH(buffer.data, ptr_buffer, buffer.size);
 
 			 uint64_t ptrNodes = 0;
@@ -323,12 +321,29 @@ struct VoxelTreeGen{
 
 			 cuCtxSynchronize();
 
+
+
 			 Box box;
 			 box.min = lasfile->header.boxMin;
 			 box.max = lasfile->header.boxMax;
 			 string path = "D:/01_dev/Prototypes/Seurat_Repo/cudaLOD/result";
-			 OctreeWriterLAZ writer(path, box, &buffer, numNodes, ptr_buffer, ptrNodes);
-			 writer.write();
+			 // dump buffer to disk
+			 fs::create_directories(path);
+			 writeBinaryFile(path+"/dump.bin", buffer);
+
+			 //OctreeWriterLAZ writer(path, box, &buffer, numNodes, ptr_buffer, ptrNodes);
+			 //writer.write();
+
+			 auto tEnd = now();
+			 cout << "Buffer size: " << buffer.size << endl;
+			 cout << "allocator offset: " << alloc_offset << endl;
+			 cout << "Tiling/writing in cuda duration: " << formatNumber(1000.0 * (tEnd - tStart), 1) << "ms" << endl;
+
+			 //CUresult resultcode = CUDA_SUCCESS;
+
+			 cout << endl;
+			 cout << "==== run cuda ===" << endl;
+
 		}
 
 		{ // RESULTS

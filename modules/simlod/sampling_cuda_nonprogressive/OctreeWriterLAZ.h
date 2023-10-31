@@ -88,10 +88,6 @@ struct OctreeWriterLAZ{
 		}
 	};
 
-	// struct Batch{
-	// 	string name;
-	// 	vector<HNode*> nodes;
-	// };
 
 	OctreeWriterLAZ(string path, Box box, Buffer* buffer, int numNodes, uint64_t offset_buffer, uint64_t offset_nodes){
 		this->path = path;
@@ -286,8 +282,6 @@ struct OctreeWriterLAZ{
 
 	}
 
-
-
 	void toLasZipVoxelBuffer(HNode* node, string target) {
 
 		auto cunode = node->cunode;
@@ -376,7 +370,6 @@ struct OctreeWriterLAZ{
 
 
 	}
-
 
 	shared_ptr<Buffer> toJpegBuffer(HNode* node){
 
@@ -500,7 +493,7 @@ struct OctreeWriterLAZ{
 				return mortoncode;
 			};
 
-			auto parallel = std::execution::par_unseq;
+			auto parallel = std::execution::par;
 			//std::sort(parallel, node->points, node->points + node->numPoints, [&](Point& a, Point& b){
 			//	return toMortonCode(a) < toMortonCode(b);
 			//});
@@ -595,80 +588,7 @@ struct OctreeWriterLAZ{
 					string filvoxelTargetPath = path + "/" + node->name + ".laz";
 					toLasZipVoxelBuffer(node, filvoxelTargetPath);
 
-					//{ // DEBUG
-
-					//	Buffer& ref = *jpegBuffer;
-					//	string filepath = path + "/" + node->name + ".jpeg";
-					//	writeBinaryFile(filepath, ref);
-					//}
-
-				//	uint64_t voxelBufferOffset = bufferSize;
-				//	// uint64_t pointBufferOffset = voxelBufferOffset + voxelBuffer->size;
-				//	uint64_t jpegBufferOffset = voxelBufferOffset + voxelBuffer->size;
-
-				//	buffers.push_back(voxelBuffer);
-				//	// buffers.push_back(pointBuffer);
-				//	buffers.push_back(jpegBuffer);
-				//	bufferSize += voxelBuffer->size + jpegBuffer->size;
-
-				//	string strNode = std::format(
-				//R"V0G0N(
-				//{{
-				//	name: "{}",
-				//	min : [{}, {}, {}], max: [{}, {}, {}],
-				//	numPoints: {}, numVoxels: {},
-				//	voxelBufferOffset: {},
-				//	jpegBufferOffset: {},
-				//	jpegBufferSize: {},
-				//}},
-				//)V0G0N", 
-				//		node->name, 
-				//		cunode->min.x, cunode->min.y, cunode->min.z,
-				//		cunode->max.x, cunode->max.y, cunode->max.z,
-				//		cunode->numPoints, cunode->numVoxels,
-				//		voxelBufferOffset, jpegBufferOffset,
-				//		jpegBuffer->size
-				//	);
-
-					//ssNodes << strNode << endl;
 				}
-
-
-				//{ // save blob
-				//	string filepath = path + "/" + batchName + ".batch";
-				//	ofstream fout;
-				//	fout.open(filepath, ios::binary | ios::out);
-
-				//	for(auto buffer : buffers){
-				//		fout.write(buffer->data_char, buffer->size);
-				//	}
-
-				//	fout.close();
-				//}
-
-
-				//string str = std::format(
-				//	"{:<8} #nodes: {:10L}, #voxels: {:10L}, #points: {:10L}", 
-				//	batchName, nodes.size(), numVoxels, numPoints); 
-
-		//		string strBatch = std::format(
-		//R"V0G0N(
-		//{{
-		//	name: "{}",
-		//	numPoints: {}, numVoxels: {},
-		//	nodes: [
-		//{}
-		//	],
-		//}}
-		//)V0G0N", 
-		//			batchName, numPoints, numVoxels, ssNodes.str()
-		//		);
-
-		//		ssBatches << strBatch << ", " << endl;
-
-		//		if (numVoxels + numPoints > 300'000) {
-		//			cout << str << endl;
-		//		}
 
 			}
 
@@ -726,20 +646,20 @@ struct OctreeWriterLAZ{
 		}
 
 		string metadata = std::format(R"V0G0N(
-{{
-	spacing: {},
-	boundingBox: {{
-		min: [{}, {}, {}],
-		max: [{}, {}, {}],
-	}},
-	nodes: [
-{}
-	],
-	batches: [
-{}
-	]
-}}
-		)V0G0N", 
+							{{
+								spacing: {},
+								boundingBox: {{
+									min: [{}, {}, {}],
+									max: [{}, {}, {}],
+								}},
+								nodes: [
+							{}
+								],
+								batches: [
+							{}
+								]
+							}}
+							)V0G0N", 
 			spacing, 
 			box.min.x, box.min.y, box.min.y, 
 			box.max.x, box.max.y, box.max.z,
@@ -752,59 +672,6 @@ struct OctreeWriterLAZ{
 		cout << "#points: " << numPoints << endl;
 
 
-
-		//if(false)
-		//nodeArray[0].traverse("r", [&](CuNode* node, string name){
-
-		//	vector<Point> points;
-		//	points.insert(points.end(), node->points, node->points + node->numPoints);
-		//	points.insert(points.end(), node->voxels, node->voxels + node->numVoxels);
-
-		//	Box cube(node->min, node->max);
-		//	vec3 min = cube.min;
-		//	vec3 max = cube.max;
-		//	vec3 size = max - min;
-
-		//	auto toMortonCode = [&](Point point){
-		//		int ix = 128.0 * (point.x - min.x) / size.x;
-		//		int iy = 128.0 * (point.y - min.y) / size.y;
-		//		int iz = 128.0 * (point.z - min.z) / size.z;
-
-		//		uint64_t mortoncode = morton::encode(ix, iy, iz);
-
-		//		return mortoncode;
-		//	};
-
-		//	std::sort(points.begin(), points.end(), [&](Point& a, Point& b){
-		//		return toMortonCode(a) < toMortonCode(b);
-		//	});
-
-		//	{
-		//		stringstream ss;
-
-		//		for(int i = 0; i < points.size(); i++){
-
-		//			Point point = points[i];
-
-		//			uint32_t color = point.color;
-
-		//			if(point.x < min.x || point.x > max.x)
-		//			if(point.y < min.y || point.y > max.y)
-		//			if(point.z < min.z || point.z > max.z)
-		//			{
-		//				color = 0x000000ff;
-		//			}
-
-		//			ss << point.x << ", " << point.y << ", " << point.z << ", ";
-		//			ss << ((color >>  0) & 0xFF) << ", ";
-		//			ss << ((color >>  8) & 0xFF) << ", ";
-		//			ss << ((color >> 16) & 0xFF) << endl;
-		//		}
-
-		//		string file = path + "/" + name + ".csv";
-		//		writeFile(file, ss.str());
-		//	}
-		//});
 
 
 
